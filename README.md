@@ -11,7 +11,9 @@ when I was socialized with a ZX81, followed by a ZX Spectrum. This particular
 system which is described in http://www.vaxman.de/projects/tiny_z80/ consists
 currently of a CPU card holding the Z80 CPU itself, 32 kB RAM, 32 kB EPROM,
 and a 16550C UART. A second card contains an IDE-controller with a CF-card
-adapter.
+adapter:
+
+![Tiny Z80 system](pictures/boards.jpg)
 
 Hardware alone is not enough and so I began writing a more or less simple
 monitor to be able to actually do something (useful) with this Z80 system.
@@ -24,7 +26,7 @@ crossassembled/compiled on a host system to be read and started from disk
 (a CF card in this particular case).
 
 In early 2012 I found Andrew Lynch's N8VEM Z80 single board computer (see
-http://n8vem-sbc.pbworks.com/) and ported my monitor to this system. Since
+https://en.wikipedia.org/wiki/N8VEM) and ported my monitor to this system. Since
 the N8VEM has different IO-addresses for its controllers and since it relies
 on a 8255 parallel IO-chip as its IDE-controller (you need the PPIDE-board to
 use this feature), the monitor was quite extensively modified to support both

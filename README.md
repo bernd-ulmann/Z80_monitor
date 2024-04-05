@@ -44,8 +44,9 @@ been included into the monitor (https://gist.github.com/jblang/ac99004160d2d9651
 
 
 ## Basics of the monitor
-The monitor resides in ROM starting at address 0 but can be assembled to start
-at any address. 
+The monitor is quite versatile and can be adapted to various Z80 systems very
+easily since I/O is nicely encapsulated in a few central functions. It resides 
+in ROM starting at address 0 but can be assembled to start at any address. 
 
 RST $00 will enter the monitor (do not care about the return address pushed
 onto the stack - the stack pointer will be reinitialized during cold as well

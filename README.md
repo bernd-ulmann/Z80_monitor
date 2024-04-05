@@ -13,7 +13,7 @@ currently of a CPU card holding the Z80 CPU itself, 32 kB RAM, 32 kB EPROM,
 and a 16550C UART. A second card contains an IDE-controller with a CF-card
 adapter:
 
-![Tiny Z80 system](pictures/boards.jpg)
+![Tiny Z80 system](boards.jpg)
 
 Hardware alone is not enough and so I began writing a more or less simple
 monitor to be able to actually do something (useful) with this Z80 system.

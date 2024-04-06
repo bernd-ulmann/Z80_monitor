@@ -1,7 +1,7 @@
 # Z80_monitor
 This repository contains the complete sources for a simple Z80 monitor which 
 runs with only minor modifications on any decent Z80 system and inlucdes 
-Brad Rodriguez' wonderful Camel Forth as well as a port of an ancient Microsoft
+Brad Rodriguez' wonderful CAMEL Forth as well as a port of an ancient Microsoft
 NASCOM BASIC interpreter. In addition to this the monitor also supports reading
 from FAT16 file systems (only from the root directory as of now).
 
@@ -32,8 +32,13 @@ on a 8255 parallel IO-chip as its IDE-controller (you need the PPIDE-board to
 use this feature), the monitor was quite extensively modified to support both
 systems, my own Z80 computer and the N8VEM.
 
-In June 2012 I found Brad Rodriguez' wonderful CAMEL-Forth implementation (see
-http://www.camelforth.com) and I decided to embed this into the monitor.
+This picture shows a typical N8VEM setup consisting of the N8VEM card and 
+the IDE adapter card (the IDE port is handled by a 8255 parallel IO chip):
+
+![N8VEM system](n8vem_ide.jpg)
+
+In June 2012 I found Brad Rodriguez' wonderful CAMEL Forth implementation (see
+http://www.CAMELForth.com) and I decided to embed this into the monitor.
 
 In May 2013 I discovered the source listing of Microsoft BASIC 4.7 (from
 1978) which was originally used in the NASCOM system (https://github.com/feilipu/NASCOM_BASIC_4.7).
@@ -185,17 +190,17 @@ http://k1.dyndns.org/Develop/projects/zasm/distributions/
 The reason for this choice is simple: I needed something which would run on
 a UNIX system since I did not want to resort to a CP/M system with TASM or the
 like. Some things are handled differently by zasm compared with other Z80
-assemblers which required substantial changes in the CAMEL-Forth sources and
+assemblers which required substantial changes in the CAMEL Forth sources and
 some minor changes in the BASIC-interpreter.
 
 ### Directory structure
 ```
 monitor:
-        camel                       CAMEL-Forth source files
-                CAMEL80.S           CAMEL-Forth source
-                CAMEL80D.S          CAMEL-Forth source
-                CAMEL80H.S          CAMEL-Forth source
-                CAMEL_LOADABLE.asm  Source to build a loadable CAMEL-Forth
+        CAMEL                       CAMEL Forth source files
+                CAMEL80.S           CAMEL Forth source
+                CAMEL80D.S          CAMEL Forth source
+                CAMEL80H.S          CAMEL Forth source
+                CAMEL_LOADABLE.asm  Source to build a loadable CAMEL Forth
                 CAMEL_ADAPTER.asm   Contains the adapter to the monitor
         clean.bash                  Clean-up script - removes output files
         disassembler                Disassembler sources
@@ -233,9 +238,9 @@ To build the monitor for the N8VEM just assemble the file n8vem.asm instead
 of the file mentioned above. The resulting n8vem.rom.hex can then be programmed
 into an 27C801 EPROM suitable for the N8VEM SBC.
 
-In case you want a CAMEL-Forth or MS-BASIC which is loadable from IDE-disk
+In case you want a CAMEL Forth or MS-BASIC which is loadable from IDE-disk
 (CF-card), you have to assemble the files CAMEL_LOADABLE.asm and/or
-basic_loadable.asm (your working directory should be either camel or msbasic
+basic_loadable.asm (your working directory should be either CAMEL or msbasic
 in this case). Since no EPROM will be burned, assemble these files just with
 zasm, not with make.bash. This will result in a file CAMEL_LOADABLE.rom
 and/or basic_loadable.rom which can then be copied onto a FAT16 formatted
@@ -245,9 +250,13 @@ CF-card.
 The monitor uses a serial line (9600 baud, 8N1, by default) for communication
 with the user. On power-on the monitor prints a welcome message like this:
 ```
-Simple Z80-monitor - V 0.13 (B. Ulmann, Sep. 2011 - May 2013)
-
-Z>
+-------------------------------------------------------------------------------
+Simple Z80-monitor - V 0.15 (B. Ulmann, September 2011 - October 2013)
+   This monitor contains Brad Rodriguez' CAMEL Forth, 
+                         John Kerr's Z80 disassembler, and
+                         BASIC 4.7 (C) Microsoft
+-------------------------------------------------------------------------------
+Z 1.15> Cold start, clearing memory.
 ```
 
 All commands are grouped into command-groups which are selected by a single
@@ -255,13 +264,123 @@ character. Each such group (except the help-group, selected with H) holds a
 set of commands which are selected by a second character. Pressing H will print
 the command structure currently implemented.
 
+```
+Z 1.15> HELP: Known command groups and commands:
+
+         C(ontrol group):
+             C(old start), I(nfo), S(tart), W(arm start)
+         D(isk group):
+             I(nfo), M(ount), T(ransfer), U(nmount)
+             R(ead), W(rite)
+         F(ile group):
+             C(at), D(irectory), L(oad), R(un)
+         H(elp)
+         M(emory group):
+             (dis)A(ssemble), D(ump), E(xamine), F(ill), I(ntel Hex Load), 
+             L(oad), R(egister dump), 
+         S(ubsystem group):
+             F(orth), B(ASIC)
+```
+
 Usually one wants to mount a CF-card, which is done by entering DM, short for
 Disk-group, Mount. To get a file directory listing, enter FD, short for
 File-group, Directory. Please note that no ENTER-key has to be pressed - just
 the individual keys to select the commands in their respective command-groups.
 
-To start Forth, press SF, short for Subsystem-group, Forth. BASIC is similarly
-started with SB.
+```
+Z 1.15> DISK/MOUNT
+
+	FATNAME:	MSDOS5.0
+	CLUSIZ:	40
+	RESSEC:	0008
+	FATSEC:	00F0
+	ROOTLEN:	0200
+	PSIZ:		003C0030
+	PSTART:	00001F80
+	FAT1START:	00001F88
+	ROOTSTART:	00002168
+	DATASTART:	00002188
+
+Z 1.15> FILE/DIRECTORY
+Directory contents:
+-------------------------------------------
+FILENAME.EXT  DIR?   SIZE (BYTES)  1ST SECT
+-------------------------------------------
+ECHO    .EXE		00000032	00002188
+_~1     .TRA		00001000	00002208
+S2      .4TH		000000B2	00002CC8
+TRASHE~1.   	DIR	00000000	000021C8
+FSEVEN~1.   	DIR	00000000	000029C8
+SPOTLI~1.   	DIR	00000000	000022C8
+S3      .4TH		000000B3	00002D08
+SIN     .4TH		0000009F	00002D48
+TEST    .TXT		00000013	00002688
+FAT_1   .ASM		0000552C	000026C8
+TEST    .4TH		0000001D	00002D88
+TEST    .BAS		00000044	00003208
+GUESS   .BAS		0000010A	000035C8
+MEMO    .TXT		00000098	00002748
+TEST210 .TXT		00000210	00002788
+TEST1F0 .TXT		000001F0	00002DC8
+TEST200 .TXT		00000200	00002E08
+GROSS   .TXT		0000CB5A	00003488
+MANDEL  .ASM		00002812	00003C08
+MANDEL  .EXE		0000019A	00003C48
+C1      .BAS		000000E1	00003F88
+FACTOR  .BAS		000000D2	00003FC8
+MANDEL  .BAS		00000145	00004008
+MANDEL2 .BAS		00000127	00004048
+SINE    .BAS		00000044	00004088
+RANDOM  .BAS		000000A6	00005148
+AT      .EXE		00000005	00006208
+VTYPER  .EXE		0000000C	00005848
+VTEST   .EXE		00000006	000059C8
+```
+
+To load an executable from disk, one enters F L:
+```
+Z 1.15> FILE/LOAD FILE: ADDR=8000 FILENAME=mandel.exe
+
+019A bytes loaded.
+```
+You can have a look at the executable just loaded using the builtin 
+disassembler:
+```
+Z 1.15> MEMORY/DISASSEMBLE: START=8000 END=8100
+
+8000 21 EA 80    LD   HL,80EAH     
+8003 DD 21 07 00 LD   IX,7         
+8007 CF          RST  8            
+8008 2A 40 81    LD   HL,(8140H)   
+...
+```
+Running the program is done by entering C S:
+```
+Z 1.15> CONTROL/START: ADDR=8000
+Generating a Mandelbrot set, B. Ulmann, JUN-2013
+.......       @@@@@@@@@@@@@@@@@@@@########===*+  .  *######@@@@@ 
+......     @@@@@@@@@@@@@@@@@@@@#########====+-.    -*===#####@@@@
+.....   @@@@@@@@@@@@@@@@@@@@#########===**+-         +*====####@@
+....  @@@@@@@@@@@@@@@@@@@########==*+-.-+-..         .-+****+*##@
+...  @@@@@@@@@@@@@@@@@#####=====**+-                          -=#
+.. @@@@@@@@@@@@@@@###=========***+-                          -*==
+..@@@@@@@@@@####==- +*******++++-                             -+=
+. @@@@#######===**-          ...                               -*
+.@@#######======++-                                            +=
+.#######=****+-                                               +*=
+.=**++ .-....                                               .+*==
+.#=====****+++.                                              -*==
+.@#######=====*---                                            .*=
+.@@@########====*++.                                           +=
+. @@@@@@@######==*+ .-++- --++--.                               =
+.. @@@@@@@@@@@@@##==*=======****+                            -+*=
+... @@@@@@@@@@@@@@@@####=======***+-                          +==
+...  @@@@@@@@@@@@@@@@@@@######====*-    .               --+-  *##
+....   @@@@@@@@@@@@@@@@@@@@########==****++-        .-+**====###@
+.....    @@@@@@@@@@@@@@@@@@@@##########===*+         *===#####@@@
+.......     @@@@@@@@@@@@@@@@@@@@@########===*+-.  .+*=######@@@@@
+Computation finished.
+```
 
 Both, CAMEL-Forth and BASIC, have been modified to be able to load programs
 from the FAT16 formatted CF-card. If Forth is started, a program can be loaded
@@ -273,3 +392,50 @@ First clear the program memory with "new" and then load the program with
 case-sensitive! If an invalid/non-existent filename is specified, nothing
 happens.
 
+The BASIC interpreter is started with S B:
+```
+Z 1.15> SUBSYSTEM/BASIC
+
+Z80 BASIC Ver 4.7b
+Copyright (C) 1978 by Microsoft
+30452 Bytes free
+Ok
+cload
+Filename: FACTOR.BAS
+Loading FACTOR.BAS
+Ok
+10 PRINT "Value: ";: INPUT V:I=3
+20 IF V-INT(V/2)*2=0 THEN PRINT "2 ";:V=INT(V/2):GOTO 20
+30 IF V-INT(V/I)*I=0 THEN PRINT I;:V=INT(V/I):GOTO 30
+40 I=I+2:IF I*I<=V THEN GOTO 30
+50 IF V<>1 THEN PRINT V;
+60 PRINT
+
+run
+Value: ? 30030
+2  3  5  7  11  13 
+Ok
+```
+To return to the monitor, just press CTRL/Y (you see my VMS roots shining 
+through here :-) ).
+
+The Forth interpreter can be started by typing S F:
+```
+Z 1.15> SUBSYSTEM/FORTH
+
+Z80 CamelForth v1.01  25 Jan 1995
+  06-JUN-2012: Initial N8VEM port
+  12-MAY-2013: Lower case conversion
+
+: sq dup * ;
+ OK
+
+ OK
+5 sq .
+25  OK
+
+ OK
+bye
+```
+
+Have fun with this tiny Z80 monitor system. :-)
